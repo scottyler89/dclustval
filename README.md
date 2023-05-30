@@ -21,8 +21,47 @@ You can also install using the setup.py script in the distribution like so:
 or cd into the repository directory and:
 `python3 -m pip install .`
 
-### How do I run use this package? ###
+### How do I use this package? ###
 
+# Trivial example
+Really all we need is two distance matrices that are matched in their samples, so 2 independent measures of the same samples/observations.
+
+In reality, this is intended for count-splitting, but just so you get the jist, here's a trivial example that doesn't use count-splitting:
+```python
+import numpy as np
+from sklearn.metrics.pairwise import euclidean_distances as euc
+from dclustval.cluster import do_cluster_validation
+np.random.seed(123456)
+n_obs = 400
+n_features = 2
+dist1 = euc(np.random.random(size=(n_obs,n_features)))
+dist2 = euc(np.random.random(size=(n_obs,n_features)))
+# The cluster labels should be zero indexed numpy arrays (the sklearn standard)
+bad_labels = np.array([0 for _ in range(int(n_obs)/2)]+[1 for _ in range(int(n_obs)/2)])
+stat_mat, p_mat_adj, final_labels = do_cluster_validation(dist1, dist2, bad_labels)
+print(set(final_labels))
+print(stat_mat)
+print(p_mat_adj)
+```
+You should see something that looks like this:
+```python
+>>> stat_mat, p_mat_adj, final_labels = do_cluster_validation(dist1, dist2, np.array(bad_labels))
+initial comps_list: [[0, 1]]
+>>> print(set(final_labels))
+{0} # Now we have only 1 cluster!
+>>> print(stat_mat)
+# this is the matrix of t-statistics for judging if the clusters are significantly different from each other
+[[0.         0.81536625]
+ [0.81536625 0.        ]]
+>>> print(p_mat_adj)
+# this is their adjusted p-values. Locations match the input cluster label indices (row/col 0 means cluster 0)
+[[0.         0.41486594]
+ [0.41486594 0.        ]]
+
+```
+
+
+# A not so trivial example
 For this demo, we're also going include differing depth across cells as a factor, so
 we'll also install the downsampling package and some plotting with seaborn:
 `python3 -m pip install bio-pyminer-norm seaborn`
