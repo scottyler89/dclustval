@@ -4,8 +4,8 @@ import seaborn as sns
 import networkx as nx
 from sklearn.metrics.pairwise import euclidean_distances as euc
 from matplotlib import pyplot as plt
-from scipy.stats import ttest_ind
-from count_split import split_mat_counts, split_mat_counts_h5
+from scipy.stats import ttest_ind, rankdata
+from count_split.count_split import split_mat_counts, split_mat_counts_h5
 
 ## Hack to work-around dependency issues
 import  scipy.signal.signaltools
@@ -23,7 +23,8 @@ scipy.signal.signaltools._centered = _centered
 from statsmodels.stats.multitest import fdrcorrection
 
 ##################################################################################
-###### Move this section to its own package
+def dense_rank(in_vect):
+    return(rankdata(in_vect,method="dense"))
 
 # This function takes two input vectors, concatenates them, applies the dense rank 
 # function to the concatenated vector, and then splits the output back into two vectors.
@@ -52,6 +53,7 @@ def dense_rank_both(in_vect1, in_vect2):
     out_vect1 = out_vect[:in_vect1.shape[0]]
     out_vect2 = out_vect[in_vect1.shape[0]:]
     return(out_vect1, out_vect2)
+
 
 # This function takes a temporary list of cell labels, finds unique labels and 
 # then returns a dictionary with the labels as keys and the indices where the 
@@ -310,7 +312,10 @@ def get_final_labels(temp_cell_labels, sig_mat, p_mat_adj):
         The final labels for each cell.
     """
     # Create a network graph from the significance matrix
-    G = nx.from_numpy_matrix(sig_mat)
+    try:
+        G = nx.from_numpy_matrix(sig_mat)
+    except:
+        G = nx.from_numpy_array(sig_mat)
     # Find the connected components
     comps = nx.connected_components(G)
     comps_list = []
@@ -449,6 +454,7 @@ def do_cluster_validation(mat_1_dist,
     sig_mat = p_mat_adj>alpha
     # Use these p-values to get the final labels
     final_labels = get_final_labels(temp_cell_labels, sig_mat, p_mat_adj)
+    final_labels = [int(f) for f in final_labels]
     if plot_dir != "":
         ##
         plt.clf()
