@@ -21,9 +21,9 @@ You can also install using the setup.py script in the distribution like so:
 or cd into the repository directory and:
 `python3 -m pip install .`
 
-### How do I use this package? ###
+## How do I use this package? ###
 
-# Trivial example
+### Trivial example ###
 Really all we need is two distance matrices that are matched in their samples, so 2 independent measures of the same samples/observations.
 
 In reality, this is intended for count-splitting, but just so you get the jist, here's a trivial example that doesn't use count-splitting:
@@ -60,8 +60,7 @@ initial comps_list: [[0, 1]]
 
 ```
 
-
-# A not so trivial example
+## A not so trivial example ##
 For this demo, we're also going include differing depth across cells as a factor, so
 we'll also install the downsampling package and some plotting with seaborn:
 `python3 -m pip install bio-pyminer-norm seaborn`
