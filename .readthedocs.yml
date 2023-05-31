@@ -11,7 +11,7 @@ python:
   system_packages: true
 
 sphinx:
-  configuration: docs/conf.py
+  configuration: source/conf.py
 
 formats: all
 
