@@ -15,6 +15,10 @@ setup(
 		"networkx",
         "count_split"
     ],
+    extras_require={
+        'docs': [
+            'm2r2'
+        ],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "License :: OSI Approved :: GNU Affero General Public License v3",
