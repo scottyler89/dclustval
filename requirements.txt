@@ -5,3 +5,4 @@ seaborn
 statsmodels
 networkx
 count_split
+scikit_learn

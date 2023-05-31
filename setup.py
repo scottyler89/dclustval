@@ -12,8 +12,9 @@ setup(
         "matplotlib",
         "seaborn",
         "statsmodels",
-		"networkx",
-        "count_split"
+	"networkx",
+        "count_split",
+        "scikit_learn"
     ],
     extras_require={
         'docs': [
