@@ -137,6 +137,7 @@ if checkout_depth:
     Xnorm=deepcopy(X)
     for cell_idx in range(n_cells):
         Xnorm[cell_idx,:]=ds(X[cell_idx,:],int(depth_vect[cell_idx]))#, 4000)#
+    Xnorm = Xnorm.T
 else:
     # For the "main event" we'll account for depth through downsampling though
     # We'll downsample to 2500 counts per cell
@@ -147,7 +148,7 @@ else:
 
 Okay - so that was all just setting up the data for analysis...
 
-Now we'll get to the part that's pacticularly relevant to 
+Now we'll get to the part that's pacticularly relevant to this repository!
 
 
 ```python
@@ -222,7 +223,7 @@ print(set(final_labels))
 ```
 For some reason one of the steps isn't using the set seeds, so the results are coming out slightly variable. That being said, above we can see that the original 10 clusters are merged down to 2 (or sometimes 3 b/c of the seed issue).
 
-Now we'll check out what the training distances look like, with the 
+Now we'll check out what the training distances look like, with the original over-clustered results and the 
 ```python
 # Now if we look at the training distances, using the final labels as 
 unique_labels = np.unique(final_labels+kmeans.labels_.tolist())
@@ -235,5 +236,23 @@ plt.show()
 Below is the image showing over clustering, that get's fixed by `do_cluster_validation` from `dclustval.cluster`
 ![Distance Matrix and Annotations](https://github.com/scottyler89/dclustval/raw/main/assets/original_vs_dclustval_merged.png)
 
+## What this repository doesn't do! ##
 
+This approach _only_ tells you whether the distances are recapitulated between two data splits. What it *does not* tell you is that your final clusters are biologically meaningful. They could be reproducibly different because of technical effects too. So still bring a health dose of caution to the interpretation of the clusters on the other side of using this repository!
+
+As a testimate to that, let's look at the results if we *did* use the "check out depth" option, giving cells a fairly tight log-normal distribution of total counts:
+```python
+>>> stat_mat, p_mat_adj, final_labels = do_cluster_validation(X1dist, X2dist, kmeans.labels_)
+initial comps_list: [[0], [1, 9], [2], [3, 7], [4], [5], [6], [8]]
+>>> 
+>>> print(set(final_labels))
+{0, 1, 2, 3, 4, 5, 6, 7}
+```
+While depth is still a factor, we can end up being under the incorrect impression that these clusters are different from each other & meaningfully so, despite the fact that they are indeed reproducibly different, but for technical reasons! This needs to be fixed in the upstream processing 
+
+And here's the heatmap showing the distances and final cluster results:
+
+![Distance Matrix and Annotations](https://github.com/scottyler89/dclustval/raw/main/assets/depth_original_vs_dclustval_merged.png)
+
+See how insane these detph effects are?? They'll still also look reproducibly different between your splits if you don't account for this depth effect. Note however that this normalization process is still highly debated.
 
