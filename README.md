@@ -131,17 +131,31 @@ for cell_idx in range(n_cells):
 # If you want to check out how insane the depth effect is, even with nice distributions
 # Set this to True and see how badly over-clustered things can appear without depth
 # normalization!
-checkout_depth = False
+def depth_norm(in_mat,target=None):
+    # Normalizes the row
+    loading = np.sum(in_mat,axis=1)
+    if target is None:
+        # Default to counts/avg total counts
+        target = np.mean(loading)
+    loading_factors = loading/target
+    return(in_mat / loading_factors[:,None])
+    
+
+def tenk_norm(in_mat):
+    return(depth_norm(in_mat, target=10000))
+
+
+checkout_depth = True
 if checkout_depth:
     depth_vect = np.random.lognormal(np.log(2500),1, size=n_cells)
-    Xnorm=deepcopy(X)
+    Xdepth=deepcopy(X)
     for cell_idx in range(n_cells):
-        Xnorm[cell_idx,:]=ds(X[cell_idx,:],int(depth_vect[cell_idx]))#, 4000)#
-    Xnorm = Xnorm.T
+        Xdepth[cell_idx,:]=ds(X[cell_idx,:],int(depth_vect[cell_idx]))#, 4000)#
+    Xdepth = Xdepth.T
 else:
     # For the "main event" we'll account for depth through downsampling though
     # We'll downsample to 2500 counts per cell
-    Xnorm = downsample_mat(X.T,2500).todense()
+    Xdepth = downsample_mat(X.T,2500).todense()
 
 
 ```
@@ -160,7 +174,7 @@ Now we'll get to the part that's pacticularly relevant to this repository!
 
 
 ## Now we'll split X into 2 matrices by count_splitting
-X1, X2 = multi_split(Xnorm,percent_vect=[.5,.5])
+X1, X2 = multi_split(Xdepth,percent_vect=[.5,.5])
 # The returned matrices are int64, so we'll convert them back
 # and also re-transpose to make sure that the cells are in the rows
 X1 = X1.T.astype(float)
@@ -252,7 +266,32 @@ While depth is still a factor, we can end up being under the incorrect impressio
 
 And here's the heatmap showing the distances and final cluster results:
 
-![Distance Matrix and Annotations](https://github.com/scottyler89/dclustval/raw/main/assets/depth_original_vs_dclustval_merged.png)
+![No Norm with Depth Distance Matrix and Annotations](https://github.com/scottyler89/dclustval/raw/main/assets/depth_original_vs_dclustval_merged.png)
 
 See how insane these detph effects are?? They'll still also look reproducibly different between your splits if you don't account for this depth effect. Note however that this normalization process is still highly debated.
+
+And no, unfortunately, counts per 10k doesn't fix the issue =/
+```python
+>>> stat_mat, p_mat_adj, final_labels = do_cluster_validation(X1dist, X2dist, kmeans.labels_)
+initial comps_list: [[0], [1], [2], [3, 7], [4], [5], [6], [8], [9]]
+>>> 
+>>> print(set(final_labels))
+{0, 1, 2, 3, 4, 5, 6, 7, 8}
+>>> 
+```
+![10k Distance Matrix and Annotations](https://github.com/scottyler89/dclustval/raw/main/assets/depth_10k_original_vs_dclustval_merged.png)
+
+
+Counts per mean total counts doesn't do the trick either:
+```python
+>>> stat_mat, p_mat_adj, final_labels = do_cluster_validation(X1dist, X2dist, kmeans.labels_)
+initial comps_list: [[0], [1], [2, 7], [3], [9, 4], [5], [6], [8]]
+>>> 
+>>> print(set(final_labels))
+{0, 1, 2, 3, 4, 5, 6, 7}
+```
+![Mean Depth Distance Matrix and Annotations](https://github.com/scottyler89/dclustval/raw/main/assets/depth_mean_count_original_vs_dclustval_merged.png)
+
+
+The issue is that the depth effect creates a non-Euclidean covariate... Difficult... Downsampling is safe for this, but is often seen as 'agressive.'
 
