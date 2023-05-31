@@ -1,3 +1,4 @@
+from . import cluster
 from .cluster import dense_rank_both
 from .cluster import catelogue_labs
 from .cluster import get_weighted_cliques
