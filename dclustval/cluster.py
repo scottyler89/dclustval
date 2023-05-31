@@ -5,7 +5,7 @@ import networkx as nx
 from sklearn.metrics.pairwise import euclidean_distances as euc
 from matplotlib import pyplot as plt
 from scipy.stats import ttest_ind, rankdata
-from count_split.count_split import split_mat_counts, split_mat_counts_h5
+#from count_split.count_split import split_mat_counts, split_mat_counts_h5
 
 ## Hack to work-around dependency issues
 import  scipy.signal.signaltools
@@ -377,6 +377,19 @@ def do_cluster_validation(mat_1_dist,
         The adjusted p-value matrix for each cluster pair.
     final_labels : list
         The final labels for each cell.
+            
+    Examples
+    --------
+    >>> import numpy as np
+    >>> from sklearn.metrics.pairwise import euclidean_distances as euc
+    >>> from dclustval.cluster import do_cluster_validation
+    >>> np.random.seed(123456)
+    >>> n_obs = 400
+    >>> n_features = 2
+    >>> dist1 = euc(np.random.random(size=(n_obs,n_features)))
+    >>> dist2 = euc(np.random.random(size=(n_obs,n_features)))
+    >>> bad_labels = np.array([0 for _ in range(int(n_obs)/2)]+[1 for _ in range(int(n_obs)/2)])
+    >>> stat_mat, p_mat_adj, final_labels = do_cluster_validation(dist1, dist2, bad_labels)
     """
     # Get a list of all unique clusters
     all_clusts = sorted(list(set(temp_cell_labels.tolist())))

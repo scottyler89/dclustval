@@ -233,7 +233,7 @@ plt.show()
 
 ```
 Below is the image showing over clustering, that get's fixed by `do_cluster_validation` from `dclustval.cluster`
-![Distance Matrix and Annotations](assets/original_vs_dclustval_merged.png)
+![Distance Matrix and Annotations](https://github.com/scottyler89/dclustval/raw/main/assets/original_vs_dclustval_merged.png)
 
 
 
