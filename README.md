@@ -11,6 +11,8 @@ This repository is in particular designed to work with count splitting on matric
 Note that if you use our count splitting repository, you should also site the original authors who came up with the count-splitting idea:
 https://arxiv.org/abs/2207.00554
 
+There's a tutorial below, but if you want function level documentation, feel free to head over to [Read The Docs!](https://dclustval.readthedocs.io/en/latest/index.html)
+
 
 ### How do I get set up? ###
 
