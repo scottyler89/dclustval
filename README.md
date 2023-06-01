@@ -254,7 +254,7 @@ Below is the image showing over clustering, that get's fixed by `do_cluster_vali
 
 ## What this repository doesn't do! ##
 
-This approach _only_ tells you whether the distances are recapitulated between two data splits. What it *does not* tell you is that your final clusters are biologically meaningful. They could be reproducibly different because of technical effects too. So still bring a health dose of caution to the interpretation of the clusters on the other side of using this repository!
+This approach _only_ tells you whether the distances are recapitulated between two data splits. What it *does not* tell you is that your final clusters are biologically meaningful. They could be reproducibly different because of technical effects too. So still bring a healthy dose of caution to the interpretation of the clusters downstream!
 
 As a testimate to that, let's look at the results if we *did* use the "check out depth" option, giving cells a fairly tight log-normal distribution of total counts:
 ```python
