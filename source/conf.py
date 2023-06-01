@@ -35,3 +35,5 @@ exclude_patterns = ['sphinx.ext.autodoc']
 
 html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
+
+html_logo = "../assets/logo.png"

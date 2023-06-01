@@ -147,7 +147,7 @@ def tenk_norm(in_mat):
     return(depth_norm(in_mat, target=10000))
 
 
-checkout_depth = True
+checkout_depth = False
 if checkout_depth:
     depth_vect = np.random.lognormal(np.log(2500),1, size=n_cells)
     Xdepth=deepcopy(X)
